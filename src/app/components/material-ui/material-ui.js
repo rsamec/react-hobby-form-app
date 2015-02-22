@@ -6,12 +6,19 @@ var RadioButton;
 var Dialog;
 
   (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"./public/scripts/main.js":[function(require,module,exports){
-  var TextField = require('material-ui').TextField;
-  var RaisedButton = require('material-ui').RaisedButton;
-  var Checkbox = require('material-ui').Checkbox;
-  var RadioButtonGroup = require('material-ui').RadioButtonGroup;
-  var RadioButton = require('material-ui').RadioButton;
-  var Dialog = require('material-ui').Dialog;
+  var textField = require('material-ui').TextField;
+  var raisedButton = require('material-ui').RaisedButton;
+  var checkbox = require('material-ui').Checkbox;
+  var radioButtonGroup = require('material-ui').RadioButtonGroup;
+  var radioButton = require('material-ui').RadioButton;
+  var dialog = require('material-ui').Dialog;
+      TextField = textField;
+      RaisedButton = raisedButton;
+      Checkbox= checkbox;
+      RadioButtonGroup= radioButtonGroup;
+      RadioButton= radioButton;
+       Dialog= dialog;
+
 
 
   },{"material-ui":"c:\\Sources\\Prototypes\\react-hobby-form\\node_modules\\material-ui\\lib\\index.js"}],"c:\\Sources\\Prototypes\\react-hobby-form\\node_modules\\browserify\\node_modules\\process\\browser.js":[function(require,module,exports){

@@ -6,8 +6,6 @@ var React = require('react');
 var mui = require('material-ui');
 var BindToMixin = require('react-binding');
 
-var FormSchema = require("business-rules-engine/commonjs/FormSchema");
-var Utils = require("business-rules-engine/commonjs/Utils");
 
 var TextField = mui.TextField;
 var RaisedButton = mui.RaisedButton;
@@ -39,12 +37,8 @@ var Hobby = React.createClass({
     render: function () {
         return (
             <li>
-                <TextField hintText="type your hobby" floatingLabelText={this.hobbyName()}
-                    valueLink={this.bindTo(this.props.model, "HobbyName")}
-                    errorText={this.props.error.HobbyName.ErrorMessage}
-                />
-                <br/>
-                <br/>
+                <TextField hintText="type your hobby" floatingLabelText={this.hobbyName()} valueLink={this.bindTo(this.props.model, "HobbyName")} />
+
                 <RaisedButton label="Delete" secondary={true} onClick={this.handleClick} />
                 <div>
                     <strong>Frequency:</strong>
@@ -74,11 +68,8 @@ var Hobby = React.createClass({
 
 var HobbyForm = React.createClass({
     mixins: [BindToMixin],
-    getInitialState: function() {
-        return {
-            data: {},
-            rules:new FormSchema.JsonSchemaRuleFactory(BusinessRules).CreateRule("Main")
-        };
+    getInitialState: function () {
+        return {data: {}};
     },
     addHobby: function (e) {
         if (this.state.data.Hobbies === undefined)
@@ -87,20 +78,11 @@ var HobbyForm = React.createClass({
         this.setState({data: this.state.data})
     },
     _handleDialogOpen: function() {
-        if (this.result().HasError){
-            //TODO: show error dialog;
-            //return;
-        }
-        //show data dialog
         this.refs.customDialog.show();
     },
 
     _handleDialogSubmit: function() {
         this.refs.customDialog.dismiss();
-    },
-    result:function(){
-        if (this.state.rules === undefined) return {Errors:{}};
-        return Utils.CompositeDotObject.Transform(this.state.rules.Validate(this.state.data)).Main;
     },
     render: function () {
         var standardActions = [
@@ -110,16 +92,12 @@ var HobbyForm = React.createClass({
         return (
             <div className="mainForm">
                 <div>
-                    <PersonComponent personModel={this.bindToState("data", "Person")} error={this.result().Person}  />
-                    <br/>
-                    <br/>
+                    <PersonComponent personModel={this.bindToState("data", "Person")}  />
                     <RaisedButton label="Add hobby" secondary={true} onClick={this.addHobby} />
-                    <span style={{"margin-left":5}} className="error">{this.result().Hobbies.PropRule.ErrorMessage}</span>
-                    <HobbyList  model={this.bindArrayToState("data", "Hobbies")} errors={this.result().Hobbies.Children} />
+                    <HobbyList  model={this.bindArrayToState("data", "Hobbies")} />
                 </div>
                 <br/>
                 <RaisedButton label="Save" secondary={true} onClick={this._handleDialogOpen} />
-
                 <Dialog ref="customDialog" title="Data send to server" actions={standardActions}>
                     <PrettyJson json={this.state.data} />
                 </Dialog>
@@ -139,7 +117,7 @@ var HobbyList = React.createClass({
 
         var hobbyNodes = this.props.model.items.map(function (hobby, index) {
             return (
-                <Hobby model={hobby} key={index} index={index} onDelete={this.handleDelete} error={this.props.errors[index]} />
+                <Hobby model={hobby} key={index} index={index} onDelete={this.handleDelete} />
             );
         }, this);
         return (
@@ -155,16 +133,10 @@ var PersonComponent = React.createClass({
     render: function () {
         return (
             <div>
-                <TextField hintText="type your first name"  floatingLabelText="First Name"
-                    errorText={this.props.error.FirstName.ErrorMessage}
-                    valueLink={this.bindTo(this.props.personModel, "FirstName")} />
-                <TextField hintText="type your last name" floatingLabelText="Last Name"
-                    errorText={this.props.error.LastName.ErrorMessage}
-                    valueLink={this.bindTo(this.props.personModel, "LastName")} />
+                <TextField hintText="type your first name" floatingLabelText="First Name" valueLink={this.bindTo(this.props.personModel, "FirstName")} />
+                <TextField hintText="type your last name" floatingLabelText="Last Name" valueLink={this.bindTo(this.props.personModel, "LastName")} />
                 <br/>
-                <TextField hintText="type your email" floatingLabelText="Email"
-                    errorText={this.props.error.Contact.Email.ErrorMessage}
-                    valueLink={this.bindTo(this.props.personModel, "Contact.Email")} />
+                <TextField hintText="type your email" floatingLabelText="Email" valueLink={this.bindTo(this.props.personModel, "Contact.Email")} />
             </div>
         );
     }
@@ -221,67 +193,6 @@ var PrettyJson = React.createClass({
         return (<pre dangerouslySetInnerHTML={{__html: this.prettyPrint(this.props.json)}}></pre>);
     }
 })
-var BusinessRules = {
-    "Person": {
-        "type": "object",
-        "properties": {
-            "FirstName": {
-                "type": "string",
-                "title": "First name",
-                "required": "true",
-                "maxLength": "15"
-            },
-            "LastName": {
-                "type": "string",
-                "title": "Last name",
-                "required": "true",
-                "maxLength": "15"
-            },
-            "Contact": {
-                "type": "object",
-                "properties": {
-                    "Email": {
-                        "type": "string",
-                        "title": "Email",
-                        "required": "true",
-                        "maxLength": 100,
-                        "email": "true"
-                    }
-                }
-            }
-        }
-    },
-    "Hobbies": {
-        "type": "array",
-        "items": {
-            "type": "object",
-            "properties": {
-                "HobbyName": {
-                    "type": "string",
-                    "title": "HobbyName",
-                    "required": "true",
-                    "maxLength": 100
-                },
-                "Frequency": {
-                    "type": "string",
-                    "title": "Frequency",
-                    "enum": ["Daily", "Weekly", "Monthly"]
-                },
-                "Paid": {
-                    "type": "boolean",
-                    "title": "Paid"
-                },
-                "Recommedation": {
-                    "type": "boolean",
-                    "title": "Recommedation"
-                }
-            }
-        },
-        "maxItems": 4,
-        "minItems": 2
-    }
-};
-
 React.render(
     <HobbyForm />,
     document.getElementById('app')
